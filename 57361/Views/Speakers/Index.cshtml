@@ -1,0 +1,66 @@
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList
+@model IPagedList<_57361.Models.Speaker>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form asp-action="Index">
+    <div class="input-group">
+        <input type="text" class="form-control" name="searchString" value="@ViewData["CurrentFilter"]" />
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">
+                    @Html.DisplayNameFor(model => model[0].Name)
+                </a>
+            </th>
+            <th>
+                <a asp-action="index" asp-route-sortOrder="@ViewData["TitleSort"]" asp-route-searchString="@ViewData["CurrentFilter"]">
+                    @Html.DisplayNameFor(model => model[0].Title)
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Bio)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bio)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SpeakerId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SpeakerId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SpeakerId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewData["CurrentSort"], searchString = ViewData["CurrentFilter"]}), new PagedListRenderOptions
+{
+    UlElementClasses = new[] { "pagination" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link" }
+})

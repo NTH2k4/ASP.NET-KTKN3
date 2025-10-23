@@ -1,0 +1,62 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<NguyenTrungHieu.Models.PerformanceViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form asp-action="Index">
+    <div class="input-group">
+        <input type="text" class="form-control" name="searchString" value="@ViewData["CurrentFilter"]" />
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].TicketPrice)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketPrice)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PerformanceId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PerformanceId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PerformanceId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewData["CurrentSort"], searchString = ViewData["CurrentFilter"]}), new PagedListRenderOptions
+{
+    UlElementClasses = new[] { "pagination" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link" }
+})
