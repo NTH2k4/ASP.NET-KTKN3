@@ -30,8 +30,8 @@ namespace _57361.Controllers
                 speakers = speakers.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
             }
             ViewData["CurrentSort"] = sortOrder;
-            //ViewData["NameSort"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            //ViewData["TitleSort"] = sortOrder == "Title" ? "title_desc" : "Title";
+            ViewData["NameSort"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["TitleSort"] = sortOrder == "Title" ? "title_desc" : "Title";
             speakers = sortOrder switch
             {
                 "name_desc" => speakers.OrderByDescending(s => s.Name),
