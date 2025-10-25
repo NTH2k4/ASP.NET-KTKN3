@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _57361.Data;
 using _57361.Models;
+using X.PagedList;
 
 namespace _57361.Controllers
 {
@@ -20,10 +21,32 @@ namespace _57361.Controllers
         }
 
         // GET: Presentations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchString, string? sortOrder, int page = 1, int pageSize = 3)
         {
-            var _57361Context = _context.Presentation.Include(p => p.Speaker);
-            return View(await _57361Context.ToListAsync());
+            var presentations = _context.Presentation.Select(p => new PresentationViewModel
+            {
+                Duration = p.Duration,
+                Slides = p.Slides,
+                Topic = p.Topic,
+                SpeakerName = p.Speaker.Name,
+                PresentationId = p.PresentationId
+            });
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                presentations = presentations.Where(p => p.Topic.ToLower().Contains(searchString.ToLower()));
+            }
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;
+            //ViewData["TopictionSort"] = string.IsNullOrEmpty(sortOrder) ? "topic_desc" : "";
+            //ViewData["DurationSort"] = sortOrder == "dura" ? "dura_desc" : "dura";
+            presentations = sortOrder switch
+            {
+                "topic_desc" => presentations.OrderByDescending(p => p.Topic),
+                "dura_desc" => presentations.OrderByDescending(p => p.Duration),
+                "dura" => presentations.OrderBy(p => p.Duration),
+                _ => presentations.OrderBy(p => p.Topic)
+            };
+            return View(presentations.ToPagedList(page, pageSize));
         }
 
         // GET: Presentations/Details/5

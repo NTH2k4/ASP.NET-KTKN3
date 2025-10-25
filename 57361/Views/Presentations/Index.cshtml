@@ -1,10 +1,25 @@
-﻿@model IEnumerable<_57361.Models.Presentation>
+﻿@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@model IPagedList<_57361.Models.PresentationViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+
+<form asp-action="index" method="get">
+    <div class="input-group">
+        <input type="text" class="form-control" name="searchString" value="@ViewData["CurrentFilter"]"/>
+        <select class="form-select" name="sortOrder">
+            <option value="">Topic (A-Z)</option>
+            <option value="topic_desc" selected="@(string.Equals(ViewData["CurrentSort"] as string, "topic_desc"))">Topic (Z-A)</option>
+            <option value="dura" selected="@(string.Equals(ViewData["CurrentSort"] as string, "dura"))">Duration</option>
+            <option value="dura_desc" selected="@(string.Equals(ViewData["CurrentSort"] as string, "dura_desc"))">Duration (decrease)</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,16 +28,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Topic)
+                @Html.DisplayNameFor(model => model[0].Topic)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Duration)
+                @Html.DisplayNameFor(model => model[0].Duration)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Slides)
+                @Html.DisplayNameFor(model => model[0].Slides)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Speaker)
+                @Html.DisplayNameFor(model => model[0].SpeakerName)
             </th>
             <th></th>
         </tr>
@@ -40,7 +55,7 @@
                 @Html.DisplayFor(modelItem => item.Slides)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Speaker.Bio)
+                @Html.DisplayFor(modelItem => item.SpeakerName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.PresentationId">Edit</a> |
@@ -51,3 +66,9 @@
 }
     </tbody>
 </table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewData["CurrentSort"], searchString = ViewData["CurrentFilter"]}), new PagedListRenderOptions
+{
+    UlElementClasses = new[] { "pagination" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link" }
+})

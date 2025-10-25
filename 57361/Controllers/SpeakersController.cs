@@ -16,9 +16,9 @@ namespace _57361.Controllers
         }
 
         // GET: Speakers
-        public async Task<IActionResult> Index(string? searchString, string? sortOrder, int page = 1, int pageSize = 2)
+        public async Task<IActionResult> Index(string? searchString, string? sortOrder, int page = 1, int pageSize = 3)
         {
-            var speakers = _context.Speaker.Select(s => new Speaker
+            var speakers = _context.Speaker.Select(s => new SpeakerViewModel
             {
                 SpeakerId = s.SpeakerId,
                 Name = s.Name,
@@ -30,8 +30,8 @@ namespace _57361.Controllers
                 speakers = speakers.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
             }
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["NameSort"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["TitleSort"] = sortOrder == "Title" ? "title_desc" : "Title";
+            //ViewData["NameSort"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            //ViewData["TitleSort"] = sortOrder == "Title" ? "title_desc" : "Title";
             speakers = sortOrder switch
             {
                 "name_desc" => speakers.OrderByDescending(s => s.Name),
@@ -57,7 +57,7 @@ namespace _57361.Controllers
             {
                 return NotFound();
             }
-
+            speaker.Presentations = _context.Presentation.Where(p => p.SpeakerId == id).ToList();
             return View(speaker);
         }
 
